@@ -3,28 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:local="clr-namespace:TDKiosk"
              xmlns:controls="clr-namespace:TDKiosk"
-             x:Class="TDKiosk.MainPage">
+             x:Class="TDKiosk.MainPage"
+             BackgroundColor="AliceBlue">
 
-
-    <StackLayout Orientation="Horizontal" 
-                 Spacing="20" 
-                 HorizontalOptions="Center"
-                 VerticalOptions="Center">
-
-        <controls:IndicetableButton
-            MainColor="White"
-            SubColor="Green"
-            Text="Частицы"
-            IsLoaderActive="True"
-            Progress="0.5"   
-            />
+    <Grid x:Name="Root">  
         
-        <controls:IndicetableButton
-            IsReverse="True"
-            Text="Частицы"
-            Progress="0.6"/>
+        <Grid HeightRequest="400"
+          WidthRequest="900"
+          HorizontalOptions="Center"
+          VerticalOptions="Center">
 
-    </StackLayout>  
+
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <controls:IndicetableButton
+                MainColor="Black"            
+                SubColor="White"
+                Grid.Column="0"
+                Grid.Row="0"
+                Text="Частицы"
+                IsLoaderActive="True"
+                x:Name="LeftButton"
+                Progress="0.4"            
+            />
+
+            <controls:IndicetableButton
+            MainColor="Black"
+            SubColor="White"
+            DeactiveColor="#919191"
+            Grid.Column="1"
+            Grid.Row="0"
+            IsReverse="True"
+            Text="Фотоны"
+            IsLoaderActive="False"
+            Progress="0.1"            
+            x:Name="RightButton"
+            />
+        </Grid>
+
+
+    </Grid>
+    
+    
+    
 
 
 

@@ -22,13 +22,22 @@ namespace TDKiosk
             BindableProperty.Create(nameof(StrokeWidth), typeof(float), typeof(ArcLoader), 1f, propertyChanged: RedrawCanvas);
 
         public static readonly BindableProperty IsLoaderActiveProperty = 
-            BindableProperty.Create("IsLoaderActive", typeof(bool), typeof(ArcLoader), default(bool));
+            BindableProperty.Create("IsLoaderActive", typeof(bool), typeof(ArcLoader), default(bool), propertyChanged: RedrawCanvas);
         
         public static readonly BindableProperty ProgressProperty = 
             BindableProperty.Create("Progress", typeof(float), typeof(ArcLoader), 0f, propertyChanged: RedrawCanvas);
 
         public static readonly BindableProperty DeactiveColorProperty = 
-            BindableProperty.Create("DeactiveColor", typeof(Color), typeof(ArcLoader), default(Color));
+            BindableProperty.Create("DeactiveColor", typeof(Color), typeof(ArcLoader), default(Color), propertyChanged: RedrawCanvas);
+
+        public static readonly BindableProperty IsReverseProperty = 
+            BindableProperty.Create("IsReverse", typeof(bool), typeof(ArcLoader), default(bool), propertyChanged: RedrawCanvas);
+
+        public bool IsReverse
+        {
+            get { return (bool)GetValue(IsReverseProperty); }
+            set { SetValue(IsReverseProperty, value); }
+        }
 
         public bool IsLoaderActive
         {
@@ -94,32 +103,38 @@ namespace TDKiosk
             using (var arkPaint = new SKPaint())
             using (var lodarePaint = new SKPaint())
             {
-                arkPaint.Style = SKPaintStyle.Stroke;
-                arkPaint.StrokeWidth = StrokeWidth;
-                arkPaint.Color = ArcColor.ToSKColor();
-
                 float x = info.Width / 2f;
                 float y = info.Height / 2f;
 
                 float size = (info.Width < info.Height ? info.Width : info.Height);
                 float padding = StrokeWidth / 2;
+                float startAngle = IsReverse ? StartAngle + 180 : StartAngle;
+                float sweepAngle = IsReverse ? -SweepAngle : SweepAngle;
 
                 SKRect rect = new SKRect(padding, padding, size - padding, size - padding);
 
-                backgroundPath.AddArc(rect, StartAngle, SweepAngle);
+
+                arkPaint.Style = SKPaintStyle.Stroke;
+                arkPaint.StrokeWidth = StrokeWidth;
+                arkPaint.Color = IsLoaderActive ? ArcColor.ToSKColor() : DeactiveColor.ToSKColor();
+
+                backgroundPath.AddArc(rect, startAngle, sweepAngle);
                 canvas.DrawPath(backgroundPath, arkPaint);
 
                 if (IsLoaderActive)
                 {
-                    var arkPadding = 4;
-                    var loaderStartAngle = StartAngle + arkPadding;
-                    var loaderSweepAngle = SweepAngle - arkPadding * 2; loaderSweepAngle *= Progress;
+                    float arkPadding = IsReverse ? -4 : 4;
+                    float loaderStartAngle = startAngle + arkPadding;
+                    float loaderSweepAngle = sweepAngle - arkPadding*2;
+
+                    loaderSweepAngle *= Progress;
 
                     lodarePaint.Style = SKPaintStyle.Stroke;
                     lodarePaint.Color = LoaderColor.ToSKColor();
                     lodarePaint.StrokeWidth = StrokeWidth * 0.4f;
 
                     foregraoundPath.AddArc(rect, loaderStartAngle, loaderSweepAngle);
+
                     canvas.DrawPath(foregraoundPath, lodarePaint);
                 }               
             }

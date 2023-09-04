@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace TDKiosk
@@ -9,6 +11,7 @@ namespace TDKiosk
         public IndicetableButton()
         {
             InitializeComponent();
+            BindingContext = this;
         }
 
         public static readonly BindableProperty TextProperty = 
@@ -40,7 +43,11 @@ namespace TDKiosk
         public bool IsReverse
         {
             get { return (bool)GetValue(IsReverseProperty); }
-            set { SetValue(IsReverseProperty, value); }
+            set 
+            {
+                SetDesignOrientation(value);
+                SetValue(IsReverseProperty, value);
+            }
         }
         public string Text
         {
@@ -68,7 +75,7 @@ namespace TDKiosk
             set { SetValue(ProgressProperty, value); }
         }
 
-        public void SetDesignOrientation(bool isReverse = false)
+        public void SetDesignOrientation(bool isReverse)
         {
             MyArc.SweepAngle = 90;
 
@@ -80,6 +87,24 @@ namespace TDKiosk
             {
                 MyArc.StartAngle = 90;
             }
+        }
+
+        private void Button_Clicked(object sender, System.EventArgs e)
+        {
+            try
+            {
+                // Use default vibration length
+                Vibration.Vibrate();
+            }
+            catch (FeatureNotSupportedException ex)
+            {
+                // Feature not supported on device
+            }
+            catch (Exception ex)
+            {
+                // Other error has occurred.
+            }
+
         }
     }
 }
