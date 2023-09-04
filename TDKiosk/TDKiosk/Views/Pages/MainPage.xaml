@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:local="clr-namespace:TDKiosk"
+             xmlns:controls="clr-namespace:TDKiosk"
+             x:Class="TDKiosk.MainPage">
+
+
+    <StackLayout Orientation="Horizontal" 
+                 Spacing="20" 
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center">
+
+        <controls:IndicetableButton
+            MainColor="White"
+            SubColor="Green"
+            Text="Частицы"
+            IsLoaderActive="True"
+            Progress="0.5"   
+            />
+        
+        <controls:IndicetableButton
+            IsReverse="True"
+            Text="Частицы"
+            Progress="0.6"/>
+
+    </StackLayout>  
+
+
+
+</ContentPage>

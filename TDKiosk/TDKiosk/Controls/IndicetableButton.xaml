@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:TDKiosk"
+             WidthRequest="200"
+             HeightRequest="200"
+             x:Class="TDKiosk.IndicetableButton">
+
+    <ContentView.Content x:Key="IndicetableButton">
+
+        <Grid HeightRequest="400" WidthRequest="400">
+
+            <Ellipse StrokeThickness="1" 
+                     HeightRequest="200"
+                     WidthRequest="200"/>
+
+            <controls:ArcLoader x:Name="MyArc" 
+                             Grid.Column="0"
+                             Grid.Row="0"
+                             IsLoaderActive="{Binding IsLoaderActive}"
+                             ArcColor="{Binding MainColor}"   
+                             Progress="{Binding Progress}"
+                             BackgroundColor="{Binding SubColor}"
+                             DeactiveColor="{Binding DeactiveColor}"
+                             StrokeWidth="100"
+                             HeightRequest="400"                            
+                             WidthRequest="400"
+                             StartAngle="180" 
+                             SweepAngle="90"/>         
+            
+            <Label 
+                   FontSize="50"                           
+                   Grid.Column="0"
+                   Grid.Row="0"        
+                   Text="{Binding Text}"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Center"/>
+            
+        </Grid>
+
+    </ContentView.Content>
+</ContentView>
