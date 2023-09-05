@@ -1,19 +1,36 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             xmlns:controls="clr-namespace:TDKiosk"
+             xmlns:controls="clr-namespace:TDKiosk" 
+             x:DataType="controls:IndicetableButton"
              x:Class="TDKiosk.IndicetableButton">
+    <!--<ContentView.Resources>
+        <Setter Property="PressedButtonWidth" Value="320" TargetType="{x:Type Button}"/>
+
+        <Style>
+            <Style.Triggers>
+                
+            </Style.Triggers>
+        </Style>
+    </ContentView.Resources>-->
 
     <ContentView.Content x:Key="IndicetableButton">
         <Grid WidthRequest="400"
               HeightRequest="400">
-                
+
+            <Ellipse Fill="#FF667CB6" 
+                     HorizontalOptions="Center" 
+                     VerticalOptions="Center"                     
+                     WidthRequest="320" 
+                     HeightRequest="320"/>
+
             <Ellipse Fill="White" 
                      HorizontalOptions="Center" 
                      VerticalOptions="Center"
+                     x:Name="ButtonElipse"
                      WidthRequest="320" 
                      HeightRequest="320"/>
-            
+
             <Grid HorizontalOptions="Center"
                   VerticalOptions="Center"
                   WidthRequest="400"
@@ -32,7 +49,8 @@
                     StartAngle="180" 
                     SweepAngle="90"/>
 
-                <Label FontSize="30"                           
+                <Label FontSize="30"
+                       x:Name="StateName"
                        Grid.Column="0"                       
                        Grid.Row="0"     
                        TextColor="Black"
@@ -41,10 +59,12 @@
                        HorizontalTextAlignment="Center"/>
 
             </Grid>
-
-            <Button HorizontalOptions="Fill"                    
+            
+            <!--TODO нужен Template-->
+            <Button HorizontalOptions="Fill"    
+                    Released="Button_Released"                    
                     BackgroundColor="Transparent"                    
-                    Clicked="Button_Clicked">
+                    Pressed="Button_Pressed">
             </Button>
 
         </Grid>

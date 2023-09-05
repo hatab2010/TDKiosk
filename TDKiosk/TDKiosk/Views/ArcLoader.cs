@@ -125,7 +125,7 @@ namespace TDKiosk
                 {
                     float arkPadding = IsReverse ? -4 : 4;
                     float loaderStartAngle = startAngle + arkPadding;
-                    float loaderSweepAngle = sweepAngle - arkPadding*2;
+                    float loaderSweepAngle = sweepAngle - arkPadding * 2;
 
                     loaderSweepAngle *= Progress;
 

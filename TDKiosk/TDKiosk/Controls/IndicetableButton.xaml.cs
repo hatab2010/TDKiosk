@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Shapes;
 using Xamarin.Forms.Xaml;
 
 namespace TDKiosk
@@ -8,11 +11,23 @@ namespace TDKiosk
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class IndicetableButton : ContentView
     {
+        public event Action Pressed;
+        public event Action Unpressed;
+        public event Action<string> Relesed;
+
+        private Loader _loader;
+
         public IndicetableButton()
         {
+
             InitializeComponent();
             BindingContext = this;
+            _loader = new Loader(1000 * 10 * 1, 0.01f);
+
+            _loader.Updated += OnUpdate;
+            _loader.Relesed += OnRelesed;
         }
+        
 
         public static readonly BindableProperty TextProperty = 
             BindableProperty.Create("Text", typeof(string), typeof(IndicetableButton), default(string));    
@@ -45,7 +60,7 @@ namespace TDKiosk
             get { return (bool)GetValue(IsReverseProperty); }
             set 
             {
-                SetDesignOrientation(value);
+                //SetDesignOrientation(value);
                 SetValue(IsReverseProperty, value);
             }
         }
@@ -74,37 +89,63 @@ namespace TDKiosk
             get { return (float)GetValue(ProgressProperty); }
             set { SetValue(ProgressProperty, value); }
         }
+        private bool _isPress = false;
+        private float _durationIncrase = 0.1f;
+        
 
-        public void SetDesignOrientation(bool isReverse)
+        private void Button_Released(object sender, EventArgs e)
+        {           
+            _isPress = false;
+            _loader.StopIncrase();           
+
+            ButtonElipse.Scale = 1;
+        }
+
+        public void Restart()
         {
-            MyArc.SweepAngle = 90;
+            IsLoaderActive = true;
+            _loader.Restart();
+        }
 
-            if (!isReverse)
+        public void Stop()
+        {
+            IsLoaderActive = false;
+            _loader.Stop();
+        }
+
+        private void Button_Pressed(object sender, EventArgs e)
+        {           
+            _isPress = true;
+            ButtonElipse.Scale = 0.9;
+
+            if (IsLoaderActive)
             {
-                MyArc.StartAngle = 180;
+                _loader.StartIncrase();
             }
             else
             {
-                MyArc.StartAngle = 90;
+                Relesed?.Invoke(StateName.Text);
             }
         }
 
-        private void Button_Clicked(object sender, System.EventArgs e)
+        private void OnRelesed()
         {
-            try
+            Dispatcher.BeginInvokeOnMainThread(() =>
             {
-                // Use default vibration length
-                Vibration.Vibrate();
-            }
-            catch (FeatureNotSupportedException ex)
-            {
-                // Feature not supported on device
-            }
-            catch (Exception ex)
-            {
-                // Other error has occurred.
-            }
+                if (IsLoaderActive == false)
+                    return;
 
+                IsLoaderActive = false;
+                Relesed?.Invoke(StateName.Text);
+            });
+        }
+
+        private void OnUpdate()
+        {
+            Dispatcher.BeginInvokeOnMainThread(() =>
+            {
+                Progress = _loader.Progress;
+            });
         }
     }
 }

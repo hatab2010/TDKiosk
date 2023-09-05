@@ -9,7 +9,7 @@
     <Grid x:Name="Root">  
         
         <Grid HeightRequest="400"
-          WidthRequest="900"
+          WidthRequest="800"
           HorizontalOptions="Center"
           VerticalOptions="Center">
 
@@ -26,25 +26,25 @@
             <controls:IndicetableButton
                 MainColor="Black"            
                 SubColor="White"
+                DeactiveColor="#E1E1E1"                
                 Grid.Column="0"
                 Grid.Row="0"
-                Text="Частицы"
-                IsLoaderActive="True"
                 x:Name="LeftButton"
-                Progress="0.4"            
+                Relesed="LeftButton_Relesed"
+                Progress="0.6"            
             />
 
             <controls:IndicetableButton
-            MainColor="Black"
-            SubColor="White"
-            DeactiveColor="#919191"
-            Grid.Column="1"
-            Grid.Row="0"
-            IsReverse="True"
-            Text="Фотоны"
-            IsLoaderActive="False"
-            Progress="0.1"            
-            x:Name="RightButton"
+                MainColor="Black"
+                SubColor="White"
+                DeactiveColor="#E1E1E1"
+                Grid.Column="1"
+                Grid.Row="0"
+                IsReverse="True"
+                IsLoaderActive="False"
+                Progress="0.1"            
+                Relesed="RightButton_Relesed"
+                x:Name="RightButton"
             />
         </Grid>
 
