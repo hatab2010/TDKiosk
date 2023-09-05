@@ -64,6 +64,15 @@ namespace TDKiosk.Droid
         )]
     [IntentFilter(new string[] { "android.app.action.DEVICE_ADMIN_ENABLED", "android.app.action.DEVICE_OWNER_CHANGED" })]
     [MetaData("android.app.device_admin", Resource = "@xml/device_admin")]
+    //adb devices
+
+    //adb shell dpm set-device-owner com.companyname.tdkiosk/.DeviceAdmin
+
+    //adb shell dpm remove-active-admin set-device-owner com.companyname.tdkiosk/.DeviceAdmin
+    //adb uninstall com.companyname.tdkiosk
+    //Установка APK
+    //adb shell dpm set-device-owner com.companyname.tdkiosk/.DeviceAdmin
+   
     public class DeviceAdmin : DeviceAdminReceiver
     {
         public override void OnEnabled(Context context, Intent intent)
