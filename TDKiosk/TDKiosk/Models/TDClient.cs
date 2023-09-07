@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
+using static Android.Graphics.ColorSpace;
 
 namespace TDKiosk.Models
 {
@@ -75,11 +73,12 @@ namespace TDKiosk.Models
                     Connected?.Invoke();
                 else if (isConnect == false && isNew)
                 {
+
                     _ = Disconnected?.Invoke();
                     _ = OnServerDisconnected();
                 }
             }
-        }
+        }       
 
         private bool _isPolling;
 
@@ -87,6 +86,11 @@ namespace TDKiosk.Models
         {
             get { lock (_lock) return _isPolling; }
             set { lock (_lock) _isPolling = value; }
+        }
+
+        protected void JaUstal()
+        {
+            _ = Connected?.Invoke();
         }
 
         protected virtual async Task OnServerDisconnected() { }
@@ -106,20 +110,20 @@ namespace TDKiosk.Models
 
         public TDClient()
         {
-            //_httpClient = new HttpClient();
-            //_httpClient.Timeout = TimeSpan.FromSeconds(3);
+            _httpClient = new HttpClient();
+            _httpClient.Timeout = TimeSpan.FromSeconds(3);
         }
 
         public async Task Connect()
         {
-            //await FindServer();
-            //await StartPolling();
+            await FindServer();
+            await StartPolling();           
         }
 
         public async Task Disconnect()
         {
-            //await StopPolling();
-            //IsDataSychrone = false;
+            await StopPolling();
+            IsDataSychrone = false;
         }
 
         bool _dispoce;
@@ -135,9 +139,6 @@ namespace TDKiosk.Models
 
                     try
                     {
-                        // получить имя хоста
-                        //string hostName = Dns.GetHostName();
-
                         // получить ip-адрес
                         var myIP = _ipAddressManager.GetLocalIPAddress();
                         var segments = myIP.ToString().Split('.');
@@ -146,6 +147,7 @@ namespace TDKiosk.Models
                         _server = IPAddress.Parse(r);
 
                         await GetIntroState();
+                        JaUstal();
                         IsConnect = true;
                         break;
                     }
@@ -212,11 +214,11 @@ namespace TDKiosk.Models
 
         public async Task SendState(int index)
         {
-            //try
-            //{
-            //    await GetResponseString($"http://{_server.ToString()}:{port}/set_state?index={index}");
-            //}
-            //catch (Exception) { }
+            try
+            {
+                await GetResponseString($"http://{_server.ToString()}:{port}/set_state?index={index}");
+            }
+            catch (Exception) { }
         }
 
         protected async Task<bool> GetIntroState()

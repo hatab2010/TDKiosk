@@ -149,7 +149,6 @@ namespace TDKiosk
                 FaindServer.IsVisible = false;
                 SetFirstPage();
             });
-            //throw new NotImplementedException();
         }
 
         private async Task OnDisconnected()
@@ -158,7 +157,6 @@ namespace TDKiosk
             {
                 FaindServer.IsVisible = true;
             });
-            //throw new NotImplementedException();
         }
 
         private void RightButton_Relesed(string obj)

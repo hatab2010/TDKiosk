@@ -25,17 +25,17 @@ namespace TDKiosk
 
         protected override void OnStart()
         {
-            //_ = Envirement.TDClient.Connect();
+            _ = Envirement.TDClient.Connect();
         }
 
         protected override void OnSleep()
         {
-            //_ = Envirement.TDClient.Disconnect();
+            _ = Envirement.TDClient.Disconnect();
         }
 
         protected override void OnResume()
         {
-            //_ = Envirement.TDClient.Connect();
+            _ = Envirement.TDClient.Connect();
         }        
     }
 }
