@@ -9,7 +9,7 @@ namespace TDKiosk
     public class Loader : BindableObject
     {
         public event Action Relesed;
-        public event Action Updated;
+        public event Action Updated;       
 
         public bool IsActive { private set; get; }
         object LoaderLock = new object();

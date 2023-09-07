@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:local="clr-namespace:TDKiosk"
              xmlns:controls="clr-namespace:TDKiosk"
-             x:Class="TDKiosk.MainPage"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="TDKiosk.MainPage"            
+             
              BackgroundColor="AliceBlue">
 
-    <Grid x:Name="Root">  
-        
+    <Grid x:Name="Root">
+
         <Grid HeightRequest="400"
           WidthRequest="800"
           HorizontalOptions="Center"
@@ -47,13 +49,19 @@
                 x:Name="RightButton"
             />
         </Grid>
+        <Grid HorizontalOptions="Fill"
+              VerticalOptions="Fill"              
+              x:Name="Intro">
+            <xct:MediaElement Source="ms-appx:///background.mp4"
+                   Aspect="AspectFill"                   
+                   IsLooping="True"/>
 
+            <Grid x:Name="Glass"                  
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill"></Grid>
+        </Grid>
+       
+        <controls:FaindServer x:Name="FaindServer"/>
 
     </Grid>
-    
-    
-    
-
-
-
 </ContentPage>

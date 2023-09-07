@@ -1,159 +1,250 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using WebSocket4Net;
 
 namespace TDKiosk.Models
 {
-    public class WebSocketClient
+    public class TDClientBase
     {
-        private WebSocket _webSocket;
+        public event Func<bool, Task> IntroStateChanged;
 
-        private string _url;
+        public event Func<Task> Disconnected;
+        public event Func<Task> Connected;
 
-        public WebSocketClient(string url)
+        private bool _isDataSynchrone;
+
+        public bool IsDataSychrone
         {
-            _url = url;
-            InitializeWebSocket();
+            get { lock (_lock) return _isDataSynchrone; }
+            set { lock (_lock) _isDataSynchrone = value; }
         }
 
-        private void InitializeWebSocket()
+
+        protected object _lock = new object();
+
+        private bool _introState;
+        protected bool IntroState
         {
-            _webSocket = new WebSocket(_url);
+            get
+            {
+                lock (_lock)
+                    return _introState;
+            }
+            set
+            {
+                bool introState;
+                lock (_lock)
+                {
+                    introState = _introState;
+                    _introState = value;
+                }
 
-            _webSocket.Opened += WebSocketOpened;
-            _webSocket.Closed += WebSocketClosed;
-            _webSocket.MessageReceived += WebSocketMessageReceived;
-            _webSocket.Error += WebSocketError;
-
-            _webSocket.Open();
+                if (introState != value || IsDataSychrone == false)
+                {
+                    _ = IntroStateChanged?.Invoke(value);
+                    IsDataSychrone = true;
+                }
+            }
         }
 
-        private void WebSocketError(object sender, SuperSocket.ClientEngine.ErrorEventArgs e)
-        {
-            Debug.WriteLine("WebSocket Error: " + e.Exception.Message);
-        }
-
-        private void WebSocketMessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            Debug.WriteLine("WebSocket Message Received: " + e.Message);
-        }
-
-        private void WebSocketClosed(object sender, EventArgs e)
-        {
-            Debug.WriteLine("WebSocket Connection Closed");
-            System.Threading.Thread.Sleep(5000);
-            InitializeWebSocket();
-        }
-
-        private void WebSocketOpened(object sender, EventArgs e)
-        {
-            Debug.WriteLine("WebSocket Connection Opened");
-        }
-
-        public void SendMessage(string message)
-        {
-            if (_webSocket.State == WebSocketState.Open)
-                _webSocket.Send(message);
-        }
-    }
-
-    internal class TDClient
-    {
-        public event Action Disconnected;
-        public event Action Connected;
-
-        private object _lock = new object();
-        private IPAddress _server;
-        private HttpClient _httpClient;
-        private int _reservedAdress = 73;
-        private int port = 9980;
-        private int _poolingInterval = 2000;
         private bool _isConnect;
-
-        private Task _poolingProcess;
-
-        public TDClient()
-        {
-            _httpClient = new HttpClient();
-            //_client.GetAsync
-        }
-
-        public bool IsConnect
+        protected bool IsConnect
         {
             get
             {
                 lock (_lock)
                     return _isConnect;
-            } 
-        }
+            }
+            set
+            {
+                bool isConnect;
+                bool isNew;
 
-        private IPAddress GetNetworkRang()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void FindServer()
-        {
-            var isFinded = false;
-
-            while(!isFinded)
-                try 
+                lock (_lock)
                 {
-                    
-                } catch (Exception) 
-                {
-                    OnServerDisconnect();
+                    isNew = _isConnect != value;
+                    isConnect = value;
+                    _isConnect = value;
                 }
+
+                if (isConnect == true && (isNew))
+                    Connected?.Invoke();
+                else if (isConnect == false && isNew)
+                {
+                    _ = Disconnected?.Invoke();
+                    _ = OnServerDisconnected();
+                }
+            }
         }
 
-        private void OnServerDisconnect()
+        private bool _isPolling;
+
+        public bool IsPolling
         {
-            _isConnect = false;
-
+            get { lock (_lock) return _isPolling; }
+            set { lock (_lock) _isPolling = value; }
         }
 
-        private void StartPolling()
+        protected virtual async Task OnServerDisconnected() { }
+    }
+
+    public class TDClient : TDClientBase, IDisposable
+    {
+        private IpAddressManager _ipAddressManager = new IpAddressManager();
+        private IPAddress _server;
+        private HttpClient _httpClient;
+        private int _reservedAdress = 60;
+        private int port = 11859;
+        private int _poolingInterval = 1000;
+
+        private bool _isPolling = false;
+        private Task _poolingProcess;
+
+        public TDClient()
         {
-
-
+            //_httpClient = new HttpClient();
+            //_httpClient.Timeout = TimeSpan.FromSeconds(3);
         }
 
-        private void StopPolling()
+        public async Task Connect()
         {
-
+            //await FindServer();
+            //await StartPolling();
         }
 
-        private void GetEnableSatet()
+        public async Task Disconnect()
+        {
+            //await StopPolling();
+            //IsDataSychrone = false;
+        }
+
+        bool _dispoce;
+        private async Task FindServer()
         {
             try
             {
-                _httpClient.GetAsync($"http://{_server.ToString()}:{port}/set_state?index={index}");
+                while (true)
+                {
+                    lock (_lock)
+                        if (_dispoce)
+                        break;
+
+                    try
+                    {
+                        // получить имя хоста
+                        //string hostName = Dns.GetHostName();
+
+                        // получить ip-адрес
+                        var myIP = _ipAddressManager.GetLocalIPAddress();
+                        var segments = myIP.ToString().Split('.');
+                        segments[3] = _reservedAdress.ToString();
+                        var r = String.Join(".", segments);
+                        _server = IPAddress.Parse(r);
+
+                        await GetIntroState();
+                        IsConnect = true;
+                        break;
+                    }
+                    catch (Exception)
+                    {
+                        await Task.Delay(5000);
+                    }
+                }
             }
-            catch (Exception)
+            catch
             {
 
             }
-        }
+        }       
 
-        private void SendState(int index)
+        private async Task StartPolling()
         {
-                _httpClient.GetAsync($"http://{_server.ToString()}:{port}/set_state?index={index}");
+            await StopPolling();
+            IsPolling = true;
+            _poolingProcess = Task.Run(Pooling);
         }
 
-        private async Task<HttpResponseMessage> Get(string url)
+        private async Task StopPolling()
+        {
+            IsPolling = false;
+
+            try
+            {
+                if (_poolingProcess != null)
+                    await _poolingProcess;
+
+                _poolingProcess = null;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private async Task Pooling()
+        {
+            if (!IsPolling)
+                return;
+
+            while (IsPolling)
+            {
+                try
+                {
+                    var introSTate = await GetIntroState();
+                    IntroState = introSTate;
+                    await Task.Delay(_poolingInterval);
+
+                }
+                catch (Exception) { IsConnect = false; IsPolling = false; break; }
+            }
+        }
+
+        protected override async Task OnServerDisconnected()
+        {
+            IsDataSychrone = false;
+            await StopPolling();
+            await FindServer();
+            await StartPolling();
+        }
+
+        public async Task SendState(int index)
+        {
+            //try
+            //{
+            //    await GetResponseString($"http://{_server.ToString()}:{port}/set_state?index={index}");
+            //}
+            //catch (Exception) { }
+        }
+
+        protected async Task<bool> GetIntroState()
+        {
+            return bool.Parse(await GetResponseString($"http://{_server.ToString()}:{port}/get_intro_state"));
+        }
+
+        protected async Task<string> GetResponseString(string uri)
         {
             try
             {
+                using (var response = await _httpClient.GetAsync(uri))
+                {
+                    var contents = await response.Content.ReadAsStringAsync();
+                    return contents;
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                IsConnect = false;
+                throw new Exception();
             }
+        }
+
+        public void Dispose()
+        {
+            Disconnect().Wait();
+            _httpClient.Dispose();
         }
     }
 }

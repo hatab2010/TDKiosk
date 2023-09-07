@@ -31,7 +31,7 @@ using Android.App;
 [assembly: UsesPermission(Android.Manifest.Permission.Vibrate)]
 
 #if DEBUG
-[assembly: Application(Debuggable=true)]
+[assembly: Application(Debuggable=true, UsesCleartextTraffic = true)]
 #else
-[assembly: Application(Debuggable = false)]
+[assembly: Application(Debuggable = false, UsesCleartextTraffic = true)]
 #endif

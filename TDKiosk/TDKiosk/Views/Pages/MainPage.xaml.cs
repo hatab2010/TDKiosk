@@ -4,91 +4,45 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using TDKiosk.Models;
 using Xamarin.Forms;
 
 namespace TDKiosk
 {
-    public static class Extensions
-    {
-        public static string GetDescription(this Enum value)
-        {
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = field.GetCustomAttribute<DescriptionAttribute>();
-
-            return attribute == null ? value.ToString() : attribute.Description;
-        }
-
-        public static T GetEnumValueFromDescription<T>(string description) where T : Enum
-        {
-            foreach (var field in typeof(T).GetFields())
-            {
-                if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
-                    if (attribute.Description == description)                    
-                        return (T)field.GetValue(null);
-                    
-                
-                else if (field.Name == description)                
-                    return (T)field.GetValue(null);                
-            }
-
-            throw new ArgumentException("Not found.", nameof(description));
-            // или возвращать значения по умолчанию
-        }
-    }
 
     public enum PageType
     {
+        [Index(0)]
         [Description("Поиск сервера")]
         FaindServer,
 
+        [Index(2)]
         [Description("Главное меню")]
         Main,
 
+        [Index(1)]
         [Description("Интро")]
         Intro,
 
+        [Index(3)]
         [Description("Частицы")]
         Partical,
 
+        [Index(4)]
         [Description("Фотоны")]
         Photons,
 
+        [Index(5)]
         [Description("Портал")]
         RightPortal,
 
+        [Index(5)]
         [Description("Портал")]
         LeftPortal
-    }
-
-    public class Button
-    {
-        public Button(PageType link, string text, bool isActive = false)
-        {
-            Link = link;
-            IsActive = isActive;
-            Text = text;
-        }
-
-        public PageType Link { private set; get; }
-        public string Text { private set; get; }
-        public bool IsActive { private set; get; }
-    }
-
-    public class Menu
-    {
-        public Menu(Button leftButton, Button rightButton)
-        {
-            this.leftButton = leftButton;
-            this.rightButton = rightButton;
-        }
-
-        public Button leftButton { private set; get; }
-        public Button rightButton { private set; get; }
     }
 
     public interface IPage
@@ -141,14 +95,70 @@ namespace TDKiosk
                 )
             },
         };
-
-        PageType CurrentPage = PageType.Main;
-        List<Menu> _pages;       
+        private bool _isIntro;
+        private PageType CurrentPage = PageType.Main;
+        private List<Menu> _pages;
+        object _lock = new object();
 
         public MainPage()
         {
             InitializeComponent();
             SetPage(CurrentPage);
+
+            Envirement.TDClient.Disconnected += OnDisconnected;
+            Envirement.TDClient.Connected += OnConnected;
+            Envirement.TDClient.IntroStateChanged += OnIntroStateChanged;
+        }
+
+        private async Task OnIntroStateChanged(bool arg)
+        {
+            bool isIntro;
+            lock (_lock)
+            {
+                isIntro = arg;
+                _isIntro = arg;
+            }
+
+            Dispatcher.BeginInvokeOnMainThread(() =>
+            {
+                if (isIntro)
+                {
+                    Intro.IsVisible = true;
+                    _ = Envirement.TDClient.SendState(1);
+                }
+                else
+                {
+                    SetFirstPage();
+                    Intro.IsVisible = false;
+                }
+            });            
+                        
+        }       
+
+        private void SetFirstPage()
+        {
+            CurrentPage = PageType.Main;
+            _ = Envirement.TDClient.SendState(CurrentPage.GetIndex());
+            SetPage(CurrentPage);
+        }
+
+        private async Task OnConnected()
+        {
+            Dispatcher.BeginInvokeOnMainThread(() =>
+            {
+                FaindServer.IsVisible = false;
+                SetFirstPage();
+            });
+            //throw new NotImplementedException();
+        }
+
+        private async Task OnDisconnected()
+        {
+            Dispatcher.BeginInvokeOnMainThread(() =>
+            {
+                FaindServer.IsVisible = true;
+            });
+            //throw new NotImplementedException();
         }
 
         private void RightButton_Relesed(string obj)
@@ -156,6 +166,7 @@ namespace TDKiosk
             if (Menus[CurrentPage] != null)
             {
                 var nextPage = Menus[CurrentPage].rightButton.Link;
+                _ = Envirement.TDClient.SendState(nextPage.GetIndex());
                 SetPage(nextPage);
             }
         }
@@ -165,6 +176,7 @@ namespace TDKiosk
             if (Menus[CurrentPage] != null)
             {
                 var nextPage = Menus[CurrentPage].leftButton.Link;
+                _ = Envirement.TDClient.SendState(nextPage.GetIndex());
                 SetPage(nextPage);
             }            
         }
