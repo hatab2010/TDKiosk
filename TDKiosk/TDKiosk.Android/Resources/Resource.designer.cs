@@ -27008,7 +27008,16 @@ namespace TDKiosk.Droid
 		{
 			
 			// aapt resource value: 0x7F0E0000
-			public const int background = 2131623936;
+			public const int back1 = 2131623936;
+			
+			// aapt resource value: 0x7F0E0001
+			public const int back2 = 2131623937;
+			
+			// aapt resource value: 0x7F0E0002
+			public const int back3 = 2131623938;
+			
+			// aapt resource value: 0x7F0E0003
+			public const int start = 2131623939;
 			
 			static Raw()
 			{

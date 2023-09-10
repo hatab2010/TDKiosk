@@ -4,16 +4,29 @@
              xmlns:local="clr-namespace:TDKiosk"
              xmlns:controls="clr-namespace:TDKiosk"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             x:Class="TDKiosk.MainPage"            
-             
-             BackgroundColor="AliceBlue">
+             x:Class="TDKiosk.MainPage">
 
-    <Grid x:Name="Root">
+    <Grid x:Name="Root" BackgroundColor="#19181a">        
+        <Grid HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+
+            <Image x:Name="BackgroundImage"></Image>
+
+            <xct:MediaElement x:Name="RootBackground"                
+                              Source="ms-appx:///back1.mp4"
+                              Aspect="AspectFill"    
+                              AutoPlay="True"
+                              ShowsPlaybackControls="False"
+                              IsLooping="True"/>
+            
+            <Grid HorizontalOptions="Fill"
+                  VerticalOptions="Fill"></Grid>
+        </Grid>
 
         <Grid HeightRequest="400"
-          WidthRequest="800"
-          HorizontalOptions="Center"
-          VerticalOptions="Center">
+              WidthRequest="800"
+              HorizontalOptions="Center"
+              VerticalOptions="Center">
 
 
             <Grid.RowDefinitions>
@@ -26,9 +39,9 @@
             </Grid.ColumnDefinitions>
 
             <controls:IndicetableButton
-                MainColor="Black"            
-                SubColor="White"
-                DeactiveColor="#E1E1E1"                
+                MainColor="#66000000"
+                SubColor="#66FFFFFF"
+                DeactiveColor="#009E7979"               
                 Grid.Column="0"
                 Grid.Row="0"
                 x:Name="LeftButton"
@@ -37,9 +50,9 @@
             />
 
             <controls:IndicetableButton
-                MainColor="Black"
-                SubColor="White"
-                DeactiveColor="#E1E1E1"
+                MainColor="#66000000"
+                SubColor="#66FFFFFF"
+                DeactiveColor="#009E7979"
                 Grid.Column="1"
                 Grid.Row="0"
                 IsReverse="True"
@@ -52,12 +65,12 @@
         <Grid HorizontalOptions="Fill"
               VerticalOptions="Fill"              
               x:Name="Intro">
-            <xct:MediaElement Source="ms-appx:///background.mp4"
-                   Aspect="AspectFill"                   
-                   IsLooping="True"/>
-
-            <Grid x:Name="Glass"                  
-                  HorizontalOptions="Fill"
+            <xct:MediaElement Source="ms-appx:///start.mp4"
+                              ShowsPlaybackControls="False"                   
+                              Aspect="AspectFill"                          
+                              IsLooping="True"/>
+            
+            <Grid HorizontalOptions="Fill"
                   VerticalOptions="Fill"></Grid>
         </Grid>
        

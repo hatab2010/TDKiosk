@@ -103,6 +103,8 @@ namespace TDKiosk
         public MainPage()
         {
             InitializeComponent();
+
+            BackgroundImage.Source = ImageSource.FromResource("TDKiosk.Images.IMG_5986.PNG");
             SetPage(CurrentPage);
 
             Envirement.TDClient.Disconnected += OnDisconnected;
@@ -183,6 +185,29 @@ namespace TDKiosk
         {
             LeftButton.Stop();
             RightButton.Stop();
+
+            switch (pageType)
+            {
+                case PageType.Main:
+                    RootBackground.Source = "ms-appx:///back1.mp4";
+                    RootBackground.IsVisible = true;
+                    break;
+                //case PageType.Partical:
+                //    RootBackground.Source = "ms-appx:///back2.mp4";
+                //    break;
+                //case PageType.Photons:
+                //    RootBackground.Source = "ms-appx:///back3.mp4";
+                //    break;
+                //case PageType.RightPortal:
+                //    RootBackground.Source = "ms-appx:///back3.mp4";
+                //    break;
+                //case PageType.LeftPortal:
+                //    RootBackground.Source = "ms-appx:///back2.mp4";
+                //    break;
+                default:
+                    RootBackground.IsVisible = false;
+                    break;
+            }
 
             if (Menus[pageType] != null)
             {

@@ -42,7 +42,7 @@ namespace TDKiosk.Droid
                 string[] lockTaskPackages;
                 lockTaskPackages = new string[] { PackageName };
                 dpm.SetLockTaskPackages(deviceAdmin, lockTaskPackages);
-                //StartLockTask(); //TODO - временно отключил, дебагер не корректно работает
+                StartLockTask(); //TODO - временно отключил, дебагер не корректно работает
             }
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);

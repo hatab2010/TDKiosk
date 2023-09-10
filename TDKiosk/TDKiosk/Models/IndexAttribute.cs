@@ -11,4 +11,15 @@ namespace TDKiosk
             this.Index = index;
         }
     }
+
+
+    class VideoSourceAttribute : Attribute
+    {
+        public string Source { get; private set; }
+
+        public VideoSourceAttribute(string index)
+        {
+            this.Source = index;
+        }
+    }
 }

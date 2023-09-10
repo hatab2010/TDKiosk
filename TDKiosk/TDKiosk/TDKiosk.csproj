@@ -12,13 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\background.mp4" />
+    <None Remove="Fonts\BlenderPro-Medium.ttf" />
+    <None Remove="IMG_5986.PNG" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\background.mp4">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Fonts\BlenderPro-Medium.ttf" />
+    <EmbeddedResource Include="Images\IMG_5986.PNG" />
   </ItemGroup>
 
   <ItemGroup>

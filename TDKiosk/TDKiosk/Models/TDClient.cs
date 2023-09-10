@@ -6,6 +6,19 @@ using static Android.Graphics.ColorSpace;
 
 namespace TDKiosk.Models
 {
+
+    public interface ITDClient
+    {
+       event Func<bool, Task> IntroStateChanged;
+
+       event Func<Task> Disconnected;
+       event Func<Task> Connected;
+
+       Task Connect();
+       Task Disconnect();
+       Task SendState(int index);
+    }
+
     public class TDClientBase
     {
         public event Func<bool, Task> IntroStateChanged;
@@ -96,7 +109,32 @@ namespace TDKiosk.Models
         protected virtual async Task OnServerDisconnected() { }
     }
 
-    public class TDClient : TDClientBase, IDisposable
+    public class TDDemo : ITDClient
+    {
+        public event Func<bool, Task> IntroStateChanged;
+        public event Func<Task> Disconnected;
+        public event Func<Task> Connected;
+
+        public Task Connect()
+        {
+            Connected?.Invoke();
+            IntroStateChanged?.Invoke(false);
+            return Task.CompletedTask;
+        }
+
+        public Task Disconnect()
+        {
+            Disconnected?.Invoke();
+            return Task.CompletedTask;
+        }
+
+        public Task SendState(int index)
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    public class TDClient : TDClientBase, IDisposable, ITDClient
     {
         private IpAddressManager _ipAddressManager = new IpAddressManager();
         private IPAddress _server;

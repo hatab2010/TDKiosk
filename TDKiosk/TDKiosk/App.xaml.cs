@@ -3,12 +3,23 @@ using TDKiosk.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
+[assembly: ExportFont("BlenderPro-Medium.ttf", Alias = "Blender")]
 namespace TDKiosk
 {
 
     public static class Envirement
     {
-        public static TDClient TDClient = new TDClient();
+        public static ITDClient TDClient;
+
+        static Envirement()
+        {
+#if DEBUG
+            TDClient = new TDDemo();
+#else
+            TDClient = new TDClient();
+#endif
+        }
+
     }
 
     public partial class App : Application

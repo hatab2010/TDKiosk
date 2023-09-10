@@ -24,7 +24,7 @@
                      WidthRequest="320" 
                      HeightRequest="320"/>
 
-            <Ellipse Fill="White" 
+            <Ellipse Fill="#202020" 
                      HorizontalOptions="Center" 
                      VerticalOptions="Center"
                      x:Name="ButtonElipse"
@@ -51,9 +51,10 @@
 
                 <Label FontSize="30"
                        x:Name="StateName"
-                       Grid.Column="0"                       
+                       Grid.Column="0"        
+                       TextColor="White"
                        Grid.Row="0"     
-                       TextColor="Black"
+                       FontFamily="Blender"
                        Text="{Binding Text}"
                        VerticalTextAlignment="Center"
                        HorizontalTextAlignment="Center"/>
