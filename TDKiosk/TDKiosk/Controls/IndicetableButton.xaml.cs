@@ -22,7 +22,7 @@ namespace TDKiosk
 
             InitializeComponent();
             BindingContext = this;
-            _loader = new Loader(1000 * 10 * 1, 0.01f);
+            _loader = new Loader(1000 * 60 * 1, 0.01f);
 
             _loader.Updated += OnUpdate;
             _loader.Relesed += OnRelesed;
