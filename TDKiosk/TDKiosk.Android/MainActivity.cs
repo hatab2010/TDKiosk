@@ -30,7 +30,7 @@ namespace TDKiosk.Droid
             //this.Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
 
             //// Запрет на выход из полноэкранного режима
-            //this.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation | SystemUiFlags.ImmersiveSticky | SystemUiFlags.Fullscreen);
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation | SystemUiFlags.ImmersiveSticky | SystemUiFlags.Fullscreen);
 
             ComponentName deviceAdmin = new ComponentName(ApplicationContext, Java.Lang.Class.FromType(typeof(DeviceAdmin)).Name);
             DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(Context.DevicePolicyService);
@@ -48,6 +48,8 @@ namespace TDKiosk.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
+
+            StartLockTask();
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
@@ -71,8 +73,7 @@ namespace TDKiosk.Droid
     //adb shell dpm remove-active-admin set-device-owner com.companyname.tdkiosk/.DeviceAdmin
     //adb uninstall com.companyname.tdkiosk
     //Установка APK
-    //adb shell dpm set-device-owner com.companyname.tdkiosk/.DeviceAdmin
-   
+    //adb shell dpm set-device-owner com.companyname.tdkiosk/.DeviceAdmin   
     public class DeviceAdmin : DeviceAdminReceiver
     {
         public override void OnEnabled(Context context, Intent intent)
