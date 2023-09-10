@@ -66,8 +66,9 @@
               VerticalOptions="Fill"              
               x:Name="Intro">
             <xct:MediaElement Source="ms-appx:///start.mp4"
-                              ShowsPlaybackControls="False"                   
-                              Aspect="AspectFill"                          
+                              ShowsPlaybackControls="False"      
+                              x:Name="IntroVideo"
+                              Aspect="AspectFill"
                               IsLooping="True"/>
             
             <Grid HorizontalOptions="Fill"

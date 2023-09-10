@@ -14,7 +14,7 @@ namespace TDKiosk
         static Envirement()
         {
 #if DEBUG
-            TDClient = new TDDemo();
+            TDClient = new TDClient();
 #else
             TDClient = new TDClient();
 #endif
