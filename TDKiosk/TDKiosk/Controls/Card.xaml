@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:TDKiosk" 
+             x:DataType="controls:Card"
+             x:Class="TDKiosk.Card">
+    <ContentView.Content>
+        <Grid Padding="20">
+            <Grid x:Name="Flash" IsVisible="{Binding FlashEnable}">
+                <Image x:Name="FLBlink" Source="flash.png" Scale="1.6"></Image>
+                <Image x:Name="RLBlink" Source="flash.png" Scale="1.6" Rotation="20"></Image>
+            </Grid>
+
+            <Image Source="{Binding path}"></Image>
+            <Label Text="{Binding Text}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="Black"></Label>
+
+            <!--TODO нужен Template-->
+            <Button HorizontalOptions="Fill"    
+                    Released="Button_Released"                    
+                    BackgroundColor="Transparent"                    
+                    Pressed="Button_Pressed">
+            </Button>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

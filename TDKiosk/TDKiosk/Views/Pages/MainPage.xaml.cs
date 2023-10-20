@@ -14,134 +14,82 @@ using Xamarin.Forms;
 namespace TDKiosk
 {
 
-    public enum PageType
-    {
-        [Index(0)]
-        [Description("Поиск сервера")]
-        FaindServer,
-
-        [Index(2)]
-        [Description("Главное меню")]
-        Main,
-
-        [Index(1)]
-        [Description("Интро")]
-        Intro,
-
-        [Index(3)]
-        [Description("Частицы")]
-        Partical,
-
-        [Index(4)]
-        [Description("Фотоны")]
-        Photons,
-
-        [Index(5)]
-        [Description("Портал")]
-        RightPortal,
-
-        [Index(5)]
-        [Description("Портал")]
-        LeftPortal
-    }
-
-    public interface IPage
-    {
-        //PageType Type { get; }
-        Menu Page { get; }
-    }
-
     public partial class MainPage : ContentPage
     {
-        public static Dictionary<PageType, Menu> Menus = new Dictionary<PageType, Menu>
-        {
-            {
-                PageType.Intro,
-                null
-            },
-            {
-                PageType.Main, 
-                new Menu(
-                        new Button(PageType.Partical, "Частицы"),
-                        new Button(PageType.Photons, "Фотоны")
-                )         
-            },
-            {
-                PageType.Partical, 
-                new Menu(
-                        new Button(PageType.RightPortal, "Частицы", isActive: true),
-                        new Button(PageType.RightPortal, "Открыть \nпортал")
-                )
-            },
-            {
-                PageType.Photons,
-                new Menu(
-                        new Button(PageType.LeftPortal, "Открыть \nпортал"),
-                        new Button(PageType.LeftPortal, "Фотоны", isActive: true)
-                )
-            },
-            {
-                PageType.RightPortal,
-                new Menu(
-                        new Button(PageType.Main, "Главное \nменю"),
-                        new Button(PageType.Main, "Продлить \nпортал", isActive: true)
-                )
-            },
-            {
-                PageType.LeftPortal,
-                new Menu(
-                        new Button(PageType.Main, "Продлить \nпортал", isActive: true),
-                        new Button(PageType.Main, "Главное \nменю")
-                )
-            },
-        };
-        private bool _isIntro;
-        private PageType CurrentPage = PageType.Main;
+        private int _currentState;
         private List<Menu> _pages;
         object _lock = new object();
+        private List<Card> _cards = new List<Card>();
+        private List<string> _descriptions = new List<string>
+        {
+            "Описание для интро",
+            "Текст подсказка для ART1",
+            "Текст подсказка для ART2",
+            "Текст подсказка для ART3"
+        };
 
         public MainPage()
         {
             InitializeComponent();
 
-            BackgroundImage.Source = ImageSource.FromResource("TDKiosk.Images.IMG_5986.PNG");
-            SetPage(CurrentPage);
-
             Envirement.TDClient.Disconnected += OnDisconnected;
             Envirement.TDClient.Connected += OnConnected;
-            Envirement.TDClient.IntroStateChanged += OnIntroStateChanged;
+            Envirement.TDClient.SceneStateChanged += OnIntroStateChanged;
+
+            _cards.Add(Btn_intercome);
+            _cards.Add(Btn_art1);
+            _cards.Add(Btn_art2);
+            _cards.Add(Btn_art3);
+
+            foreach (var btn in _cards)
+            {
+                btn.OnPressed += BtnOnPressed;
+            }
         }
 
-        private async Task OnIntroStateChanged(bool arg)
+        private void BtnOnPressed(Card card)
         {
-            bool isIntro;
-            lock (_lock)
-            {
-                isIntro = arg;
-                _isIntro = arg;
-            }
+            var sceneIndex = _cards.IndexOf(card) + 2;
+            Envirement.TDClient.SendState(sceneIndex);
 
             Dispatcher.BeginInvokeOnMainThread(() =>
             {
-                if (isIntro)
-                {
-                    Intro.IsVisible = true;
-                    _ = Envirement.TDClient.SendState(1);
-                }
-                else
-                {
-                    SetFirstPage();
-                    Intro.IsVisible = false;
-                }
-            });            
-                        
-        }       
+                SetScene(sceneIndex);
+            });
+        }
 
-        private void SetFirstPage()
+        private async Task OnIntroStateChanged(int sceneIndex)
         {
-            CurrentPage = PageType.Main;
-            _ = Envirement.TDClient.SendState(CurrentPage.GetIndex());
-            SetPage(CurrentPage);
+            Dispatcher.BeginInvokeOnMainThread(() =>
+            {
+                SetScene(sceneIndex);
+            });
+        }
+
+        private void SetScene(int index)
+        {
+            if (index == _currentState)
+                return;
+
+            if (index == 0)
+                Intro.IsVisible = true;
+            else
+                Intro.IsVisible = false;
+
+
+            foreach (var card in _cards) { card.FlashEnable = false; }
+
+            if (index >= 2 && index <= 5)
+            {
+                var buttonIndex = index - 2;
+                _cards[buttonIndex].FlashEnable = true;
+                Infobar.Text = _descriptions[buttonIndex];
+            }
+
+            lock (_lock)
+            {
+                _currentState = index;
+            }
         }
 
         private async Task OnConnected()
@@ -149,7 +97,6 @@ namespace TDKiosk
             Dispatcher.BeginInvokeOnMainThread(() =>
             {
                 FaindServer.IsVisible = false;
-                SetFirstPage();
             });
         }
 
@@ -159,69 +106,6 @@ namespace TDKiosk
             {
                 FaindServer.IsVisible = true;
             });
-        }
-
-        private void RightButton_Relesed(string obj)
-        {            
-            if (Menus[CurrentPage] != null)
-            {
-                var nextPage = Menus[CurrentPage].rightButton.Link;
-                _ = Envirement.TDClient.SendState(nextPage.GetIndex());
-                SetPage(nextPage);
-            }
-        }
-
-        private void LeftButton_Relesed(string obj)
-        {
-            if (Menus[CurrentPage] != null)
-            {
-                var nextPage = Menus[CurrentPage].leftButton.Link;
-                _ = Envirement.TDClient.SendState(nextPage.GetIndex());
-                SetPage(nextPage);
-            }            
-        }
-
-        void SetPage(PageType pageType)
-        {
-            LeftButton.Stop();
-            RightButton.Stop();
-
-            switch (pageType)
-            {
-                case PageType.Main:
-                    RootBackground.Source = "ms-appx:///back1.mp4";
-                    RootBackground.IsVisible = true;
-                    break;
-                //case PageType.Partical:
-                //    RootBackground.Source = "ms-appx:///back2.mp4";
-                //    break;
-                //case PageType.Photons:
-                //    RootBackground.Source = "ms-appx:///back3.mp4";
-                //    break;
-                //case PageType.RightPortal:
-                //    RootBackground.Source = "ms-appx:///back3.mp4";
-                //    break;
-                //case PageType.LeftPortal:
-                //    RootBackground.Source = "ms-appx:///back2.mp4";
-                //    break;
-                default:
-                    RootBackground.IsVisible = false;
-                    break;
-            }
-
-            if (Menus[pageType] != null)
-            {
-                LeftButton.Text = Menus[pageType].leftButton.Text;
-                RightButton.Text = Menus[pageType].rightButton.Text;
-
-                if (Menus[pageType].leftButton.IsActive)                
-                    LeftButton.Restart();
-
-                if (Menus[pageType].rightButton.IsActive)
-                    RightButton.Restart();
-            }
-
-            CurrentPage = pageType;
         }
     }
 }

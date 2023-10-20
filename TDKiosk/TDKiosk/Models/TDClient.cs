@@ -9,7 +9,7 @@ namespace TDKiosk.Models
 
     public interface ITDClient
     {
-       event Func<bool, Task> IntroStateChanged;
+       event Func<int, Task> SceneStateChanged;
 
        event Func<Task> Disconnected;
        event Func<Task> Connected;
@@ -21,7 +21,7 @@ namespace TDKiosk.Models
 
     public class TDClientBase
     {
-        public event Func<bool, Task> IntroStateChanged;
+        public event Func<int, Task> SceneStateChanged;
 
         public event Func<Task> Disconnected;
         public event Func<Task> Connected;
@@ -34,29 +34,28 @@ namespace TDKiosk.Models
             set { lock (_lock) _isDataSynchrone = value; }
         }
 
-
         protected object _lock = new object();
 
-        private bool _introState;
-        protected bool IntroState
+        private int _sceneState;
+        protected int SceneState
         {
             get
             {
                 lock (_lock)
-                    return _introState;
+                    return _sceneState;
             }
             set
             {
-                bool introState;
+                int introState;
                 lock (_lock)
                 {
-                    introState = _introState;
-                    _introState = value;
+                    introState = _sceneState;
+                    _sceneState = value;
                 }
 
                 if (introState != value || IsDataSychrone == false)
                 {
-                    _ = IntroStateChanged?.Invoke(value);
+                    _ = SceneStateChanged?.Invoke(value);
                     IsDataSychrone = true;
                 }
             }
@@ -94,7 +93,6 @@ namespace TDKiosk.Models
         }       
 
         private bool _isPolling;
-
         public bool IsPolling
         {
             get { lock (_lock) return _isPolling; }
@@ -111,14 +109,14 @@ namespace TDKiosk.Models
 
     public class TDDemo : ITDClient
     {
-        public event Func<bool, Task> IntroStateChanged;
+        public event Func<int, Task> SceneStateChanged;
         public event Func<Task> Disconnected;
         public event Func<Task> Connected;
 
         public Task Connect()
         {
             Connected?.Invoke();
-            IntroStateChanged?.Invoke(false);
+            SceneStateChanged?.Invoke(1);
             return Task.CompletedTask;
         }
 
@@ -184,7 +182,7 @@ namespace TDKiosk.Models
                         var r = String.Join(".", segments);
                         _server = IPAddress.Parse(r);
 
-                        await GetIntroState();
+                        await GetState();
                         JaUstal();
                         IsConnect = true;
                         break;
@@ -233,8 +231,8 @@ namespace TDKiosk.Models
             {
                 try
                 {
-                    var introSTate = await GetIntroState();
-                    IntroState = introSTate;
+                    var introSTate = await GetState();
+                    SceneState = introSTate;
                     await Task.Delay(_poolingInterval);
 
                 }
@@ -254,14 +252,14 @@ namespace TDKiosk.Models
         {
             try
             {
-                await GetResponseString($"http://{_server.ToString()}:{port}/set_state?index={index}");
+                await GetResponseString($"http://{_server}:{port}/set_state?index={index}");
             }
             catch (Exception) { }
         }
 
-        protected async Task<bool> GetIntroState()
+        protected async Task<int> GetState()
         {
-            return bool.Parse(await GetResponseString($"http://{_server.ToString()}:{port}/get_intro_state"));
+            return int.Parse(await GetResponseString($"http://{_server}:{port}/get_state"));
         }
 
         protected async Task<string> GetResponseString(string uri)

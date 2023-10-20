@@ -9,59 +9,63 @@
     <Grid x:Name="Root" BackgroundColor="#19181a">        
         <Grid HorizontalOptions="Fill"
               VerticalOptions="Fill">
-
-            <Image x:Name="BackgroundImage"></Image>
-
-            <xct:MediaElement x:Name="RootBackground"                
-                              Source="ms-appx:///back1.mp4"
-                              Aspect="AspectFill"    
-                              AutoPlay="True"
-                              ShowsPlaybackControls="False"
-                              IsLooping="True"/>
-            
             <Grid HorizontalOptions="Fill"
                   VerticalOptions="Fill"></Grid>
         </Grid>
-
-        <Grid HeightRequest="400"
-              WidthRequest="800"
-              HorizontalOptions="Center"
-              VerticalOptions="Center">
-
-
+        <StackLayout>
+            <Label Text="Панель управления Порталом" 
+                   TextColor="#b2e2ff" 
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"></Label>
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
+                <RowDefinition Height="6*"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
             </Grid.RowDefinitions>
+            
+            <Grid HeightRequest="400"
+                  Grid.Row="0"
+                  WidthRequest="800"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-            <controls:IndicetableButton
-                MainColor="#66000000"
-                SubColor="#66FFFFFF"
-                DeactiveColor="#009E7979"               
-                Grid.Column="0"
-                Grid.Row="0"
-                x:Name="LeftButton"
-                Relesed="LeftButton_Relesed"
-                Progress="0.6"            
-            />
-
-            <controls:IndicetableButton
-                MainColor="#66000000"
-                SubColor="#66FFFFFF"
-                DeactiveColor="#009E7979"
-                Grid.Column="1"
-                Grid.Row="0"
-                IsReverse="True"
-                IsLoaderActive="False"
-                Progress="0.1"            
-                Relesed="RightButton_Relesed"
-                x:Name="RightButton"
-            />
+                <controls:Card x:Name="Btn_intercome" 
+                               Grid.Column="0" 
+                               path="card2.png" 
+                               Text="Интерком"
+                               FlashEnable="True"></controls:Card>
+                <controls:Card x:Name="Btn_art1" 
+                               Text="АРТ0"
+                               Grid.Column="1" 
+                               path="card.png"></controls:Card>
+                <controls:Card x:Name="Btn_art2" 
+                               Grid.Column="2" 
+                               Text="АРТ1"
+                               path="card.png"></controls:Card>
+                <controls:Card x:Name="Btn_art3" 
+                               Grid.Column="3" 
+                               Text="АРТ2"
+                               path="card.png"></controls:Card>
+            </Grid>
+                <Editor Grid.Row="1" 
+                        x:Name="Infobar"
+                        Text="Разнообразный и богатый опыт сложившаяся структура организации требуют определения и уточнения новых предложений. Идейные соображения высшего порядка, а также рамки и место обучения кадров играет важную роль в формировании форм развития. Равным образом реализация намеченных плановых заданий обеспечивает широкому" 
+                        BackgroundColor="#2c3e50"
+                        TextColor="White"
+                        Margin="20"
+                        HorizontalOptions="Center"
+                        InputTransparent="False"
+                        AutoSize="TextChanges" IsReadOnly="True"/>
         </Grid>
+        </StackLayout>
         <Grid HorizontalOptions="Fill"
               VerticalOptions="Fill"              
               x:Name="Intro">
@@ -74,7 +78,7 @@
             <Grid HorizontalOptions="Fill"
                   VerticalOptions="Fill"></Grid>
         </Grid>
-       
+        
         <controls:FaindServer x:Name="FaindServer"/>
 
     </Grid>
