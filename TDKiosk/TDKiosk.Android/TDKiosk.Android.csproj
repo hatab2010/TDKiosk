@@ -311,5 +311,11 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\assets\js\jquery.js" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\kk_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\kk_select.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

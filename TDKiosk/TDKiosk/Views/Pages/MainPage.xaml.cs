@@ -67,12 +67,14 @@ namespace TDKiosk
             "Текст подсказка для ART3"
         };
 
+        int _currentServerState = 0;
         public MainPage()
         {
             InitializeComponent();
 
             Envirement.TDClient.Disconnected += OnDisconnected;
             Envirement.TDClient.Connected += OnConnected;
+            //((TDClient)Envirement.TDClient).StateRecived += OnStateRecived;
             //Envirement.TDClient.SceneStateChanged += OnSceneStateChanged;
 
             _webView = new HybridWebView();
@@ -81,60 +83,56 @@ namespace TDKiosk
             _webView.Source = urlSource;
             this.Content = _webView;
 
-            Task.Run(async () =>
+            Task.Run((Func<Task>)(async () =>
             {
-                await Task.Delay(3000);
+                await Task.Delay(5000);
                 var exCpunt = 0;
                 while (true || exCpunt > 10)
                 {
                     try
                     {
-                        Dispatcher.BeginInvokeOnMainThread(async () =>
+                        Dispatcher.BeginInvokeOnMainThread((Action)(async () =>
                         {
-                            var result = await _webView
-                                .EvaluateJavaScriptAsync("getState()");
-                            var panelState = int.Parse(result);
 
-                            if (panelState != _currentState)
+                            if (Envirement.TDClient.IsConnect == false)
+                                return;
+
+                            try
                             {
-                                _currentState = panelState;
-                                await Envirement.TDClient.SendState(panelState);
-                            }
+                                var panelState = int.Parse(await _webView.EvaluateJavaScriptAsync("getState()"));
+                                if (panelState != _currentState)
+                                {
+                                    _currentState = panelState;
+                                    await Envirement.TDClient.SendState(panelState);
+                                }
 
-                           
-                        });
-                        await Task.Delay(100);
+                                var serverState = await Envirement.TDClient.GetState();
+                                if (serverState != _currentState)
+                                {
+                                    await _webView.EvaluateJavaScriptAsync($"setState({serverState})");
+                                    _currentState = serverState;
+                                }
+                            }
+                            catch (System.Exception)
+                            {
+                                await _webView.EvaluateJavaScriptAsync($"showPopup(true)");
+                                await Envirement.TDClient.Connect();
+                            }
+                        }));
+
+                        await Task.Delay(300);
                     }
                     catch (System.Exception)
                     {
                         exCpunt++;
                     }
                 }
-            });
+            }));
         }
 
-        private async Task OnSceneStateChanged(int sceneIndex)
+        private void OnStateRecived(int stateIndex)
         {
-            Dispatcher.BeginInvokeOnMainThread(() =>
-            {
-                SetScene(sceneIndex);
-            });
-        }
-
-        private void SetScene(int index)
-        {
-            try
-            {
-                Dispatcher.BeginInvokeOnMainThread(async () =>
-                {
-                    //var result = await _webView.EvaluateJavaScriptAsync($"setState({index})");
-                });
-
-            }
-            catch (System.Exception)
-            {
-
-            }
+            var t = stateIndex;
         }
 
         private async Task OnConnected()
@@ -150,6 +148,7 @@ namespace TDKiosk
             Dispatcher.BeginInvokeOnMainThread(async () =>
             {
                 await _webView.EvaluateJavaScriptAsync($"showPopup(true)");
+                // Envirement.TDClient.Connect();
             });
         }
     }

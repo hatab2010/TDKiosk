@@ -13,18 +13,21 @@ namespace TDKiosk.Models
 
        event Func<Task> Disconnected;
        event Func<Task> Connected;
-
+       bool IsConnect { get; }
+       Task<int> GetState();
        Task Connect();
        Task Disconnect();
        Task SendState(int index);
     }
 
+    public class ConnectException : Exception
+    {
+
+    }
+
     public class TDClientBase
     {
         public event Func<int, Task> SceneStateChanged;
-
-        public event Func<Task> Disconnected;
-        public event Func<Task> Connected;
 
         private bool _isDataSynchrone;
 
@@ -62,32 +65,20 @@ namespace TDKiosk.Models
         }
 
         private bool _isConnect;
-        protected bool IsConnect
+        public bool IsConnect
         {
             get
             {
                 lock (_lock)
                     return _isConnect;
             }
-            set
+            protected set
             {
-                bool isConnect;
-                bool isNew;
 
                 lock (_lock)
                 {
-                    isNew = _isConnect != value;
-                    isConnect = value;
                     _isConnect = value;
-                }
-
-                if (isConnect == true && (isNew))
-                    Connected?.Invoke();
-                else if (isConnect == false)
-                {
-                    _ = Disconnected?.Invoke();
-                    _ = OnServerDisconnected();
-                }
+                }             
             }
         }       
 
@@ -98,16 +89,13 @@ namespace TDKiosk.Models
             set { lock (_lock) _isPolling = value; }
         }
 
-        protected void JaUstal()
-        {
-            //_ = Connected?.Invoke();
-        }
-
         protected virtual async Task OnServerDisconnected() { }
     }
 
     public class TDDemo : ITDClient
     {
+        public bool IsConnect => throw new NotImplementedException();
+
         public event Func<int, Task> SceneStateChanged;
         public event Func<Task> Disconnected;
         public event Func<Task> Connected;
@@ -125,6 +113,11 @@ namespace TDKiosk.Models
             return Task.CompletedTask;
         }
 
+        public Task<int> GetState()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SendState(int index)
         {
             return Task.CompletedTask;
@@ -133,6 +126,10 @@ namespace TDKiosk.Models
 
     public class TDClient : TDClientBase, IDisposable, ITDClient
     {
+        public event Func<Task> Disconnected;
+        public event Func<Task> Connected;
+        public event Action<int> StateRecived;
+
         private IpAddressManager _ipAddressManager = new IpAddressManager();
         private IPAddress _server;
         private HttpClient _httpClient;
@@ -152,12 +149,10 @@ namespace TDKiosk.Models
         public async Task Connect()
         {
             await FindServer();
-            await StartPolling();           
         }
 
         public async Task Disconnect()
         {
-            await StopPolling();
             IsDataSychrone = false;
         }
 
@@ -181,7 +176,8 @@ namespace TDKiosk.Models
                         var r = String.Join(".", segments);
                         _server = IPAddress.Parse(r);
 
-                        IsConnect = await GetState() != 0;
+                        IsConnect = await GetState() != -1;
+                        Connected?.Invoke();
                         break;
                     }
                     catch (Exception)
@@ -196,78 +192,22 @@ namespace TDKiosk.Models
             }
         }       
 
-        private async Task StartPolling()
-        {
-            await StopPolling();
-            IsPolling = true;
-            _poolingProcess = Task.Run(Pooling);
-        }
-
-        private async Task StopPolling()
-        {
-            IsPolling = false;
-
-            try
-            {
-                if (_poolingProcess != null)
-                    await _poolingProcess;
-
-                _poolingProcess = null;
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private async Task Pooling()
-        {
-            if (!IsPolling)
-                return;
-
-            while (IsPolling)
-            {
-                try
-                {
-                    var introSTate = await GetState();
-                    SceneState = introSTate;
-                    await Task.Delay(_poolingInterval);
-
-                }
-                catch (Exception) { IsConnect = false; IsPolling = false; break; }
-            }
-        }
-
         protected override async Task OnServerDisconnected()
         {
             IsDataSychrone = false;
-            await StopPolling();
             await FindServer();
-            await StartPolling();
         }
 
         public async Task SendState(int index)
         {
-            try
-            {
-                await GetResponseString($"http://{_server}:{port}/set_state?index={index}");
-            }
-            catch (Exception) 
-            {
-                IsConnect = false;
-            }
+
+            await GetResponseString($"http://{_server}:{port}/set_state?index={index}");
         }
 
-        protected async Task<int> GetState()
+        public async Task<int> GetState()
         {
-            try
-            {
-                return int.Parse(await GetResponseString($"http://{_server}:{port}/get_state"));
-            }
-            catch
-            {
-                IsConnect = false;
-                return 0;
-            }
+
+            return int.Parse(await GetResponseString($"http://{_server}:{port}/get_state"));
         }
 
         protected async Task<string> GetResponseString(string uri)
@@ -282,8 +222,13 @@ namespace TDKiosk.Models
             }
             catch (Exception ex)
             {
-                IsConnect = false;
-                throw new Exception();
+                if (IsConnect == true)
+                {
+                    IsConnect = false;
+                    Disconnected?.Invoke();
+                }                
+
+                throw new ConnectException();
             }
         }
 

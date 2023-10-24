@@ -26,8 +26,8 @@ namespace TDKiosk.Droid
 
             ////TODO - временно отключил, дебагер не корректно работает
             //// Полноэкранный режим
-            //this.Window.AddFlags(WindowManagerFlags.Fullscreen);
-            //this.Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
+            this.Window.AddFlags(WindowManagerFlags.Fullscreen);
+            this.Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
 
             //// Запрет на выход из полноэкранного режима
             Window.DecorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation | SystemUiFlags.ImmersiveSticky | SystemUiFlags.Fullscreen);
