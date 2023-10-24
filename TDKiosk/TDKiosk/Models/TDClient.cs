@@ -83,9 +83,8 @@ namespace TDKiosk.Models
 
                 if (isConnect == true && (isNew))
                     Connected?.Invoke();
-                else if (isConnect == false && isNew)
+                else if (isConnect == false)
                 {
-
                     _ = Disconnected?.Invoke();
                     _ = OnServerDisconnected();
                 }
@@ -101,7 +100,7 @@ namespace TDKiosk.Models
 
         protected void JaUstal()
         {
-            _ = Connected?.Invoke();
+            //_ = Connected?.Invoke();
         }
 
         protected virtual async Task OnServerDisconnected() { }
@@ -182,9 +181,7 @@ namespace TDKiosk.Models
                         var r = String.Join(".", segments);
                         _server = IPAddress.Parse(r);
 
-                        await GetState();
-                        JaUstal();
-                        IsConnect = true;
+                        IsConnect = await GetState() != 0;
                         break;
                     }
                     catch (Exception)
@@ -254,12 +251,23 @@ namespace TDKiosk.Models
             {
                 await GetResponseString($"http://{_server}:{port}/set_state?index={index}");
             }
-            catch (Exception) { }
+            catch (Exception) 
+            {
+                IsConnect = false;
+            }
         }
 
         protected async Task<int> GetState()
         {
-            return int.Parse(await GetResponseString($"http://{_server}:{port}/get_state"));
+            try
+            {
+                return int.Parse(await GetResponseString($"http://{_server}:{port}/get_state"));
+            }
+            catch
+            {
+                IsConnect = false;
+                return 0;
+            }
         }
 
         protected async Task<string> GetResponseString(string uri)

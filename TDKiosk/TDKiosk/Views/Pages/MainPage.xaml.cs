@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Java.Lang;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -13,9 +14,47 @@ using Xamarin.Forms;
 
 namespace TDKiosk
 {
+    public class HybridWebView : WebView
+    {
+        Action<string> action;
+
+        public static readonly BindableProperty UriProperty = BindableProperty.Create(
+            propertyName: "Uri",
+            returnType: typeof(string),
+            declaringType: typeof(HybridWebView),
+            defaultValue: default(string));
+
+        public string Uri
+        {
+            get { return (string)GetValue(UriProperty); }
+            set { SetValue(UriProperty, value); }
+        }
+
+        public void RegisterAction(Action<string> callback)
+        {
+            action = callback;
+        }
+
+        public void Cleanup()
+        {
+            action = null;
+        }
+
+        public void InvokeAction(string data)
+        {
+            if (action == null || data == null)
+            {
+                return;
+            }
+            action.Invoke(data);
+        }
+    }
+
 
     public partial class MainPage : ContentPage
     {
+        WebView _webView;
+        int currentState = 0;
         private int _currentState;
         private List<Menu> _pages;
         object _lock = new object();
@@ -34,31 +73,47 @@ namespace TDKiosk
 
             Envirement.TDClient.Disconnected += OnDisconnected;
             Envirement.TDClient.Connected += OnConnected;
-            Envirement.TDClient.SceneStateChanged += OnIntroStateChanged;
+            //Envirement.TDClient.SceneStateChanged += OnSceneStateChanged;
 
-            _cards.Add(Btn_intercome);
-            _cards.Add(Btn_art1);
-            _cards.Add(Btn_art2);
-            _cards.Add(Btn_art3);
+            _webView = new HybridWebView();
+            UrlWebViewSource urlSource = new UrlWebViewSource();
+            urlSource.Url = System.IO.Path.Combine(DependencyService.Get<IBaseUrl>().GetUrl(), "index.html");
+            _webView.Source = urlSource;
+            this.Content = _webView;
 
-            foreach (var btn in _cards)
+            Task.Run(async () =>
             {
-                btn.OnPressed += BtnOnPressed;
-            }
-        }
+                await Task.Delay(3000);
+                var exCpunt = 0;
+                while (true || exCpunt > 10)
+                {
+                    try
+                    {
+                        Dispatcher.BeginInvokeOnMainThread(async () =>
+                        {
+                            var result = await _webView
+                                .EvaluateJavaScriptAsync("getState()");
+                            var panelState = int.Parse(result);
 
-        private void BtnOnPressed(Card card)
-        {
-            var sceneIndex = _cards.IndexOf(card) + 2;
-            Envirement.TDClient.SendState(sceneIndex);
+                            if (panelState != _currentState)
+                            {
+                                _currentState = panelState;
+                                await Envirement.TDClient.SendState(panelState);
+                            }
 
-            Dispatcher.BeginInvokeOnMainThread(() =>
-            {
-                SetScene(sceneIndex);
+                           
+                        });
+                        await Task.Delay(100);
+                    }
+                    catch (System.Exception)
+                    {
+                        exCpunt++;
+                    }
+                }
             });
         }
 
-        private async Task OnIntroStateChanged(int sceneIndex)
+        private async Task OnSceneStateChanged(int sceneIndex)
         {
             Dispatcher.BeginInvokeOnMainThread(() =>
             {
@@ -68,43 +123,33 @@ namespace TDKiosk
 
         private void SetScene(int index)
         {
-            if (index == _currentState)
-                return;
-
-            if (index == 0)
-                Intro.IsVisible = true;
-            else
-                Intro.IsVisible = false;
-
-
-            foreach (var card in _cards) { card.FlashEnable = false; }
-
-            if (index >= 2 && index <= 5)
+            try
             {
-                var buttonIndex = index - 2;
-                _cards[buttonIndex].FlashEnable = true;
-                Infobar.Text = _descriptions[buttonIndex];
+                Dispatcher.BeginInvokeOnMainThread(async () =>
+                {
+                    //var result = await _webView.EvaluateJavaScriptAsync($"setState({index})");
+                });
+
             }
-
-            lock (_lock)
+            catch (System.Exception)
             {
-                _currentState = index;
+
             }
         }
 
         private async Task OnConnected()
         {
-            Dispatcher.BeginInvokeOnMainThread(() =>
+            Dispatcher.BeginInvokeOnMainThread(async () =>
             {
-                FaindServer.IsVisible = false;
+                await _webView.EvaluateJavaScriptAsync($"showPopup(false)");
             });
         }
 
         private async Task OnDisconnected()
         {
-            Dispatcher.BeginInvokeOnMainThread(() =>
+            Dispatcher.BeginInvokeOnMainThread(async () =>
             {
-                FaindServer.IsVisible = true;
+                await _webView.EvaluateJavaScriptAsync($"showPopup(true)");
             });
         }
     }

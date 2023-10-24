@@ -28,4 +28,10 @@ namespace TDKiosk
             return new IPAddress(ipBytes).ToString();
         }
     }
+
+
+    public interface IBaseUrl
+    {
+        string GetUrl();
+    }
 }

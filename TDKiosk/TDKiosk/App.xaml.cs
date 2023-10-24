@@ -41,12 +41,12 @@ namespace TDKiosk
 
         protected override void OnSleep()
         {
-            _ = Envirement.TDClient.Disconnect();
+
         }
 
         protected override void OnResume()
         {
-            _ = Envirement.TDClient.Connect();
+
         }        
     }
 }

@@ -62,11 +62,97 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LocalFiles.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\package.json" />
+    <AndroidAsset Include="Assets\style.min.css.map" />
+    <AndroidAsset Include="Assets\assets\css\style.min.css.map" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-Bold.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-BoldItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-Italic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-Light.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-LightItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-Medium.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-MediumItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-Regular.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-SemiBold.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\CormorantInfant-SemiBoldItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Black.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Black.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Black.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Black.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BlackItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BlackItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BlackItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BlackItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Bold.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Bold.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Bold.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Bold.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BoldItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BoldItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BoldItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-BoldItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBold.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBold.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBold.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBold.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBoldItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBoldItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBoldItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraBoldItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLight.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLight.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLight.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLight.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLightItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLightItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLightItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ExtraLightItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Heavy.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Heavy.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Heavy.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Heavy.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-HeavyItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-HeavyItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-HeavyItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-HeavyItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Italic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Italic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Italic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Italic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Light.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Light.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Light.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Light.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-LightItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-LightItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-LightItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-LightItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Medium.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Medium.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Medium.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Medium.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-MediumItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-MediumItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-MediumItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-MediumItalic.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Regular.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Regular.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Regular.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Regular.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Thin.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Thin.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Thin.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-Thin.woff2" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ThinItalic.eot" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ThinItalic.ttf" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ThinItalic.woff" />
+    <AndroidAsset Include="Assets\assets\fonts\TTNorms-ThinItalic.woff2" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
@@ -87,7 +173,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidAsset Include="Assets\index.html" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TDKiosk\TDKiosk.csproj">
       <Project>{8657562A-06AA-47A9-A467-352BC38E3863}</Project>
@@ -123,6 +211,105 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\flash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\jquery.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\animal_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\animal_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\animal_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\draw_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\draw_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\draw_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\partical_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\partical_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\partical_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\style.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\telemost_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\telemost_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\telemost_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\telemost_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\css\style.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\fonts\stylesheet.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\animal_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\animal_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\animal_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\draw_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\draw_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\draw_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\partical_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\partical_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\partical_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\telemost_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\telemost_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\telemost_start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\images\telemost_unfocus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\assets\js\jquery.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

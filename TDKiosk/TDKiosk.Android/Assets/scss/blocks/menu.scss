@@ -1,0 +1,21 @@
+.menu{
+  margin-top: 10px;
+  width: 1400px;
+  border-radius: 10px;
+  height: 70px;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.48);
+  color: white;
+
+  &__item-list{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__item{
+    margin: 10px;
+    text-transform: uppercase;
+  }
+}

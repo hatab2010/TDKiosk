@@ -104,4 +104,5 @@ namespace TDKiosk.Droid
             base.OnLockTaskModeEntering(context, intent, pkg);
         }
     }
+
 }
